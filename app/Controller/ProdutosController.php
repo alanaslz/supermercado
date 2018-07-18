@@ -1,0 +1,152 @@
+<?php
+App::uses('AppController', 'Controller');
+/**
+ * Produtos Controller
+ *
+ * @property Produto $Produto
+ * @property PaginatorComponent $Paginator
+ */
+class ProdutosController extends AppController {
+
+/**
+ * Components
+ *
+ * @var array
+ */
+	public $components = array('Paginator');
+
+/**
+ * index method
+ *
+ * @return void
+ */
+	public function index() {
+		$this->Produto->recursive = 0;
+		$this->set('produtos', $this->Paginator->paginate());
+	}
+	
+	
+	public function listar() {
+		$this->Produto->recursive = 0;
+		$this->set('produtos', $this->Paginator->paginate());
+	}
+
+
+/**
+ * view method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function view($id = null) {
+		if (!$this->Produto->exists($id)) {
+			throw new NotFoundException(__('Invalid produto'));
+		}
+		$options = array('conditions' => array('Produto.' . $this->Produto->primaryKey => $id));
+		$this->set('produto', $this->Produto->find('first', $options));
+	}
+
+/**
+ * add method
+ *
+ * @return void
+ */
+	public function add() {
+		if ($this->request->is('post')) {
+			$this->Produto->create();
+			if ($this->Produto->save($this->request->data)) {
+				$this->Session->setFlash(__('The produto has been saved.'));
+				return $this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The produto could not be saved. Please, try again.'));
+			}
+		}
+		$categorias = $this->Produto->Categoria->find('list');
+		$marcas = $this->Produto->Marca->find('list');
+		$unidades = $this->Produto->Unidade->find('list');
+		$vendas = $this->Produto->Venda->find('list');
+		$this->set(compact('categorias', 'marcas', 'unidades', 'vendas'));
+	}
+
+/**
+ * edit method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function edit($id = null) {
+		if (!$this->Produto->exists($id)) {
+			throw new NotFoundException(__('Invalid produto'));
+		}
+		if ($this->request->is(array('post', 'put'))) {
+			if ($this->Produto->save($this->request->data)) {
+				$this->Session->setFlash(__('The produto has been saved.'));
+				return $this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The produto could not be saved. Please, try again.'));
+			}
+		} else {
+			$options = array('conditions' => array('Produto.' . $this->Produto->primaryKey => $id));
+			$this->request->data = $this->Produto->find('first', $options);
+		}
+		$categorias = $this->Produto->Categoria->find('list');
+		$marcas = $this->Produto->Marca->find('list');
+		$unidades = $this->Produto->Unidade->find('list');
+		$vendas = $this->Produto->Venda->find('list');
+		$this->set(compact('categorias', 'marcas', 'unidades', 'vendas'));
+	}
+
+/**
+ * delete method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function delete($id = null) {
+		$this->Produto->id = $id;
+		if (!$this->Produto->exists()) {
+			throw new NotFoundException(__('Invalid produto'));
+		}
+		$this->request->allowMethod('post', 'delete');
+		if ($this->Produto->delete()) {
+			$this->Session->setFlash(__('The produto has been deleted.'));
+		} else {
+			$this->Session->setFlash(__('The produto could not be deleted. Please, try again.'));
+		}
+		return $this->redirect(array('action' => 'index'));
+	}
+	
+	
+	
+	
+	public function prateleira() {
+		
+		 $produtos = $this->Produto->find('all', array(
+            'recursive' => -1,
+            'contain' => array(
+                'Marca'
+            ),
+            'limit' => 20,
+            'conditions' => array(
+                'Produto.status' => 1,
+//                 'Marca.status' => 1
+            ),
+            'order' => array(
+//                 'Produto.views' => 'ASC'
+            )
+        ));
+        $this->set(compact('produtos'));
+
+
+
+
+
+	}
+
+
+
+
+}

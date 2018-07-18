@@ -1,0 +1,22 @@
+.error-message {
+	clear: both;
+	 color:#fff;
+	background-color: #dd4b39;
+	  padding: 2px 3px;
+	 border-radius: 3px;
+ 
+	 
+}
+
+
+/*icon do calendar*/
+.ui-datepicker-trigger{
+    
+    display: inline-block;
+    margin-left:0px;
+    vertical-align: top;
+    width: 28px;
+    cursor:pointer;
+    margin-left: -30px;
+
+}
